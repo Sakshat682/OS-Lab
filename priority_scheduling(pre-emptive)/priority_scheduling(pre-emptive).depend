@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1615202777 source:c:\users\asus\desktop\cc++\priority_scheduling(pre-emptive)\main.cpp
+	<iostream>
+	<queue>
+	<iomanip>
+

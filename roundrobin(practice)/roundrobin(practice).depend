@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1613902775 source:c:\users\asus\desktop\cc++\roundrobin(practice)\main.cpp
+	<iostream>
+	<queue>
+

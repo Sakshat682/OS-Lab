@@ -1,0 +1,315 @@
+#include<bits/stdc++.h>
+using namespace std;
+void findWaitingTime(int processes[], int n, int bt[],
+                                   int wt[], int at[])
+{
+    int service_time[n];
+    service_time[0] = 0;
+    wt[0] = 0;
+
+    for (int i = 1; i < n ; i++)
+    {
+        service_time[i] = service_time[i-1] + bt[i-1];
+
+        // sum - at[i]
+        wt[i] = service_time[i] - at[i];
+        if (wt[i] < 0)
+            wt[i] = 0;
+    }
+}
+
+void findTurnAroundTime(int processes[], int n, int bt[],
+                                      int wt[], int tat[])
+{
+    for (int i = 0; i < n ; i++)
+        tat[i] = bt[i] + wt[i];
+}
+
+void findavgTime(int processes[], int n, int bt[], int at[])
+{
+    int wt[n], tat[n];
+    findWaitingTime(processes, n, bt, wt, at);
+
+    findTurnAroundTime(processes, n, bt, wt, tat);
+
+    cout << "Processes " << " Burst Time " << " Arrival Time "
+         << " Waiting Time " << " Turn-Around Time "
+         << " Completion Time \n";
+    int total_wt = 0, total_tat = 0;
+    for (int i = 0 ; i < n ; i++)
+    {
+        total_wt = total_wt + wt[i];
+        total_tat = total_tat + tat[i];
+        int compl_time = tat[i] + at[i];
+        cout << " " << i+1 << "\t\t" << bt[i] << "\t\t"
+             << at[i] << "\t\t" << wt[i] << "\t\t "
+             << tat[i]  <<  "\t\t " << compl_time << endl;
+    }
+
+    cout << "Average waiting time = "
+         << (float)total_wt / (float)n;
+    cout << "\nAverage turn around time = "
+         << (float)total_tat / (float)n;
+}
+
+void Shortest_Job_First(int processes[], int n, int b[], int a[])
+{
+
+      int temp,tt=0,min,d,i,j;
+      float atat=0,awt=0,stat=0,swt=0;
+      int e[n],tat[n],wt[n];
+
+      for(i=0;i<n;i++)
+      {
+         for(j=i+1;j<n;j++)
+          {
+                if(b[i]>b[j])
+                {
+                      temp=a[i];
+                      a[i]=a[j];
+                      a[j]=temp;
+
+                      temp=b[i];
+                      b[i]=b[j];
+                      b[j]=temp;
+                }
+          }
+      }
+      min=a[0];
+      for(i=0;i<n;i++)
+      {
+            if(min>a[i])
+            {
+                  min=a[i];
+                  d=i;
+            }
+      }
+      tt=min;
+      e[d]=tt+b[d];
+      tt=e[d];
+
+      for(i=0;i<n;i++)
+      {
+            if(a[i]!=min)
+            {
+                  e[i]=b[i]+tt;
+                  tt=e[i];
+            }
+      }
+      for(i=0;i<n;i++)
+      {
+
+            tat[i]=e[i]-a[i];
+            stat=stat+tat[i];
+            wt[i]=tat[i]-b[i];
+            swt=swt+wt[i];
+      }
+      atat=stat/n;
+      awt=swt/n;
+      cout<<"Process  Arrival-time(s)  Burst-time(s)  Waiting-time(s)  Turnaround-time(s)\n";
+
+    for(i=0;i<n;i++)
+    {
+    cout<<"P"<<i+1<<"              "<<a[i]<<"                "<<b[i]<<"                  "<<wt[i]<<"               "<<tat[i]<<endl;
+    }
+
+    cout<<"awt="<<awt<<" atat="<<atat;
+}
+void CalcWaitingTime(int process[],
+                     int wt_time[], int n,
+                     int burst_time[],
+                     int quantum,
+                     int completion_time[],
+                     int arrival_time[])
+{
+  int rem_time[n];
+
+  for(int i = 0; i < n; i++)
+    rem_time[i] = burst_time[i];
+
+  int t = 0;
+  int arrival = 0;
+
+  while(true)
+  {
+    bool done = true;
+    for(int i = 0; i < n; i++)
+    {
+      if(rem_time[i] > 0)
+      {
+        done = false;
+        if(rem_time[i] > quantum &&
+           arrival_time[i] <= arrival)
+        {
+          t += quantum;
+          rem_time[i] -= quantum;
+          arrival++;
+        }
+        else
+        {
+          if(arrival_time[i] <= arrival)
+          {
+            arrival++;
+            t += rem_time[i];
+            rem_time[i] = 0;
+            completion_time[i] = t;
+          }
+        }
+      }
+    }
+
+    if(done==true)
+      break;
+  }
+}
+
+void CalcTurnAroundTime(int process[],
+                        int wt_time[], int n,
+                        int burst_time[],
+                        int tat_time[],
+                        int completion_time[],
+                        int arrival_time[])
+{
+  for(int i = 0; i < n; i++)
+  {
+    tat_time[i] = completion_time[i] -
+                  arrival_time[i];
+    wt_time[i] = tat_time[i] -
+                 burst_time[i];
+  }
+}
+
+void CalcAvgTime(int process[], int n,
+                 int burst_time[],
+                 int quantum,
+                 int arrival_time[])
+{
+  int wt_time[n];
+  int tat_time[n];
+  int completion_time[n];
+  int total_wt = 0, total_tat = 0;
+  CalcWaitingTime(process, wt_time,
+                  n, burst_time,
+                  quantum,
+                  completion_time,
+                  arrival_time);
+  CalcTurnAroundTime(process, wt_time,
+                     n, burst_time,
+                     tat_time,
+                     completion_time,
+                     arrival_time);
+  cout << setw(9) << "PROCESS" <<
+          setw(14) << "ARRIVAL TIME" <<
+          setw(12) << "BURST TIME" <<
+          setw(17) << "COMPLETION TIME" <<
+          setw(18) << "TURN AROUND TIME" <<
+          setw(16) << "WAITING TIME\n";
+
+  for (int i = 0; i < n; i++)
+  {
+    total_wt = total_wt + wt_time[i];
+    total_tat = total_tat + tat_time[i];
+    cout << setw(6) << i + 1 <<
+            setw(11) << arrival_time[i] <<
+            setw(12) << burst_time[i] <<
+            setw(17) << completion_time[i] <<
+            setw(15) << tat_time[i] <<
+            setw(16) << wt_time[i] << endl;
+  }
+
+  cout << "\nAVERAGE WAITING TIME : " <<
+          (float)total_wt / (float)n;
+  cout << "\nAVERAGE TURN AROUND TIME : " <<
+          (float)total_tat / (float)n;
+}
+void Shortest_Remaining_Time_First(int processes[],int n,int a[],int b[])
+{
+
+
+    int x[n];
+    int waiting[n],turnaround[n],completion[n];
+    int i,j,smallest,count=0,time;
+    double avg=0,tt=0,end;
+
+    for(i=0; i<10; i++)
+        x[i]=b[i];
+
+    b[19]=9999;
+    for(time=0; count!=10; time++)
+    {
+        smallest=19;
+        for(i=0; i<10; i++)
+        {
+            if(a[i]<=time && b[i]<b[smallest] && b[i]>0 )
+                smallest=i;
+        }
+        b[smallest]--;
+
+        if(b[smallest]==0)
+        {
+            count++;
+            end=time+1;
+            completion[smallest] = end;
+            waiting[smallest] = end - a[smallest] - x[smallest];
+            turnaround[smallest] = end - a[smallest];
+        }
+    }
+    cout<<"Process"<<"\t"<< "burst-time"<<"\t"<<"arrival-time" <<"\t"<<"waiting-time" <<"\t"<<"turnaround-time"<< "\t"<<"completion-time"<<endl;
+    for(i=0; i<10; i++)
+    {
+        cout<<"p"<<i+1<<"\t\t"<<x[i]<<"\t\t"<<a[i]<<"\t\t"<<waiting[i]<<"\t\t"<<turnaround[i]<<"\t\t"<<completion[i]<<endl;
+        avg = avg + waiting[i];
+        tt = tt + turnaround[i];
+    }
+    cout<<"\n\nAverage waiting time ="<<avg/n;
+    cout<<"  Average Turnaround time ="<<tt/n<<endl;
+}
+int main()
+{
+    int processes[] = {1, 2, 3,4,5,6,7,8,9,10};
+    int n = sizeof processes / sizeof processes[0];
+
+    int burst_time[] = {10,12,8,11,3,15,16,12,7,5};
+
+    int arrival_time[] = {0,2,3,1,4,3,2,6,8,9};
+    int quantum=3;
+    Shortest_Remaining_Time_First(processes,20,arrival_time,burst_time);
+
+    return 0;
+}
+
+
+
+output:-
+Shortest_Remaining_Time_First:-
+Process	burst-time	arrival-time	waiting-time	turnaround-time	completion-time
+p1		10		0		3		13		13
+p2		12		2		42		54		56
+p3		8		3		22		30		33
+p4		11		1		32		43		44
+p5		3		4		0		3		7
+p6		15		3		53		68		71
+p7		16		2		69		85		87
+p8		12		5043		0		12		5055
+p9		7		8		10		17		25
+p10		5		9		4		9		18
+
+
+Average waiting time =11.75  Average Turnaround time =16.7
+
+CalcAvgTime:-
+  PROCESS  ARRIVAL TIME  BURST TIME  COMPLETION TIME  TURN AROUND TIME   WAITING TIME
+     1          0          10               66             66              56
+     2          2          12               86             84              72
+     3          3           8               71             68              60
+     4          1          11               73             72              61
+     5          4           3               24             20              17
+     6          3          15               98             95              80
+     7          2          16               99             97              81
+     8          6          12               95             89              77
+     9          8           7               83             75              68
+    10          9           5               65             56              51
+
+AVERAGE WAITING TIME : 62.3
+AVERAGE TURN AROUND TIME : 72.2
+

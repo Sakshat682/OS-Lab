@@ -1,0 +1,79 @@
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    int n;
+    cin>>n;
+    int p[n];
+    int pa[n];
+    int pb[n];
+    cout<<"Enter the arrival time: ";
+    for(int i=0;i<n;i++)
+    {
+        cin>>pa[i];
+        p[i]=i+1;
+    }
+    cout<<"Enter the burst time : ";
+    for(int i=0;i<n;i++)
+    {
+        cin>>pb[i];
+    }
+
+    for(int i=0;i<n;i++)
+    {
+        for(int j=i;j<n;j++)
+        {
+            if(pa[i]>pa[j])
+            {
+                pa[i]=pa[i]+pa[j];
+                pa[j]=pa[i]-pa[j];
+                pa[i]=pa[i]-pa[j];
+
+                p[i]=p[i]+p[j];
+                p[j]=p[i]-p[j];
+                p[i]=p[i]-p[j];
+
+                pb[i]=pb[i]+pb[j];
+                pb[j]=pb[i]-pb[j];
+                pb[i]=pb[i]-pb[j];
+            }
+        }
+    }
+    int ct[n];
+    ct[0]=pb[0]+pa[0];
+    for(int i=1;i<n;i++)
+    {
+        ct[i]=ct[i-1]+pb[i];
+    }
+    for(int i=0;i<n;i++)
+    {
+        for(int j=i;j<n;j++)
+        {
+            if(p[i]>p[j])
+            {
+                pa[i]=pa[i]+pa[j];
+                pa[j]=pa[i]-pa[j];
+                pa[i]=pa[i]-pa[j];
+
+                p[i]=p[i]+p[j];
+                p[j]=p[i]-p[j];
+                p[i]=p[i]-p[j];
+
+                pb[i]=pb[i]+pb[j];
+                pb[j]=pb[i]-pb[j];
+                pb[i]=pb[i]-pb[j];
+
+                ct[i]=ct[i]+ct[j];
+                ct[j]=ct[i]-ct[j];
+                ct[i]=ct[i]-ct[j];
+            }
+        }
+    }
+    for(int i=0;i<n;i++)
+    {
+        cout<<ct[i]<<" ";
+    }
+    return 0;
+}

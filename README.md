@@ -1,8 +1,8 @@
 # Operating System Scheduling Algorithms
 ### Check this in below git repo 👇
 https://github.com/Sakshat682/oslab/
-If any issues please notify me.
-Codes are in C++
+##### If any issues please notify me.
+##### Codes are in C++
 1. [FCFS](https://github.com/Sakshat682/oslab/blob/main/fcfs(practice)/main.cpp)
 2. [SJF](https://github.com/Sakshat682/oslab/blob/main/sjf_scheduling.cpp)
 3. [Prediction in SJF](https://github.com/Sakshat682/oslab/blob/main/Prediction%20in%20sjf.docx)
